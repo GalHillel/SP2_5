@@ -1,30 +1,30 @@
-    #include "MagicalContainer.hpp"
+#include "MagicalContainer.hpp"
 
-    namespace ariel
+namespace ariel
+{
+    MagicalContainer::MagicalContainer() {}
+
+    MagicalContainer::~MagicalContainer() {}
+
+    void MagicalContainer::addElement(int element)
     {
-        MagicalContainer::MagicalContainer() {}
+        elements.push_back(element);
+    }
 
-        MagicalContainer::~MagicalContainer() {}
-
-        void MagicalContainer::addElement(int element)
+    void MagicalContainer::removeElement(int element)
+    {
+        for (auto it = elements.begin(); it != elements.end(); ++it)
         {
-            elements.push_back(element);
-        }
-
-        void MagicalContainer::removeElement(int element)
-        {
-            for (auto it = elements.begin(); it != elements.end(); ++it)
+            if (*it == element)
             {
-                if (*it == element)
-                {
-                    elements.erase(it);
-                    break;
-                }
+                elements.erase(it);
+                break;
             }
         }
-
-        int MagicalContainer::size()
-        {
-            return elements.size();
-        }
     }
+
+    int MagicalContainer::size()
+    {
+        return elements.size();
+    }
+}
