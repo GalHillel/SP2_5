@@ -13,6 +13,7 @@ namespace ariel
         ~MagicalContainer();
         void addElement(int element);
         void removeElement(int element);
+        //MagicalContainer &operator=(const MagicalContainer &other);
         int size();
 
         class AscendingIterator
@@ -20,6 +21,7 @@ namespace ariel
         private:
             const MagicalContainer &container;
             std::vector<int>::const_iterator current;
+            std::vector<int> sortedElements;
 
         public:
             AscendingIterator(const MagicalContainer &container);

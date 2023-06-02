@@ -1,7 +1,9 @@
 #include "MagicalContainer.hpp"
+#include <algorithm>
 
 namespace ariel
 {
+
     MagicalContainer::AscendingIterator::AscendingIterator(const MagicalContainer &container)
         : container(container), current(container.elements.begin()) {}
 
@@ -14,6 +16,10 @@ namespace ariel
     {
         if (this != &other)
         {
+            if (&container != &other.container)
+            {
+                throw std::runtime_error("Cannot assign iterators from different containers");
+            }
             current = other.current;
         }
         return *this;
@@ -53,7 +59,7 @@ namespace ariel
     MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::begin()
     {
         AscendingIterator iter(*this);
-        iter.current = container.elements.begin();
+        iter.current = std::min_element(container.elements.begin(), container.elements.end());
         return iter;
     }
 

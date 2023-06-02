@@ -4,7 +4,14 @@
 namespace ariel
 {
     MagicalContainer::PrimeIterator::PrimeIterator(const MagicalContainer &container)
-        : container(container), current(container.elements.begin()) {}
+        : container(container), current(container.elements.begin())
+    {
+        // Initialize the iterator to the first prime element in the container
+        while (current != container.elements.end() && !isPrime(*current))
+        {
+            ++current;
+        }
+    }
 
     MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other)
         : container(other.container), current(other.current) {}
@@ -65,25 +72,17 @@ namespace ariel
 
     MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
     {
-        ++current;
-        while (current != container.elements.end())
+        if (current == container.elements.end())
         {
-            bool isPrime = true;
-            int num = *current;
-            for (int i = 2; i <= std::sqrt(num); ++i)
-            {
-                if (num % i == 0)
-                {
-                    isPrime = false;
-                    break;
-                }
-            }
-            if (isPrime)
-            {
-                break;
-            }
+            throw std::runtime_error("Iterator out of range");
+        }
+
+        ++current;
+        while (current != container.elements.end() && !isPrime(*current))
+        {
             ++current;
         }
+
         return *this;
     }
 

@@ -55,6 +55,11 @@ namespace ariel
 
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++()
     {
+        if (forward == container.elements.end() && backward == container.elements.begin() - 1)
+        {
+            throw std::runtime_error("Iterator out of range");
+        }
+
         if (isForward)
         {
             ++forward;
@@ -63,6 +68,7 @@ namespace ariel
         {
             --backward;
         }
+
         isForward = !isForward;
         return *this;
     }
