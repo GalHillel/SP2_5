@@ -2,6 +2,7 @@
 
 namespace ariel
 {
+
     MagicalContainer::SideCrossIterator::SideCrossIterator(const MagicalContainer &container)
         : container(container), forward(container.elements.begin()), backward(container.elements.end() - 1), isForward(true) {}
 
@@ -14,6 +15,10 @@ namespace ariel
     {
         if (this != &other)
         {
+            if (&container != &other.container)
+            {
+                throw std::runtime_error("Cannot assign iterators from different containers");
+            }
             forward = other.forward;
             backward = other.backward;
             isForward = other.isForward;
@@ -45,27 +50,38 @@ namespace ariel
     {
         if (isForward)
         {
+            if (forward == container.elements.end())
+            {
+                throw std::runtime_error("Iterator out of range");
+            }
             return *forward;
         }
         else
         {
+            if (backward == container.elements.begin() - 1)
+            {
+                throw std::runtime_error("Iterator out of range");
+            }
             return *backward;
         }
     }
 
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++()
     {
-        if (forward == container.elements.end() && backward == container.elements.begin() - 1)
-        {
-            throw std::runtime_error("Iterator out of range");
-        }
-
         if (isForward)
         {
+            if (forward == container.elements.end())
+            {
+                throw std::runtime_error("Iterator out of range");
+            }
             ++forward;
         }
         else
         {
+            if (backward == container.elements.begin() - 1)
+            {
+                throw std::runtime_error("Iterator out of range");
+            }
             --backward;
         }
 
@@ -73,15 +89,17 @@ namespace ariel
         return *this;
     }
 
-    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::begin()
+    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::begin() const
     {
-        SideCrossIterator iter(*this);
+        return SideCrossIterator(container);
+    }
+
+    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::end() const
+    {
+        SideCrossIterator iter(container);
+        iter.forward = container.elements.end();
+        iter.backward = container.elements.begin() - 1;
         return iter;
     }
 
-    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::end()
-    {
-        SideCrossIterator iter(*this);
-        return iter;
-    }
 }

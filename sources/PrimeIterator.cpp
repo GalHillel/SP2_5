@@ -22,6 +22,10 @@ namespace ariel
     {
         if (this != &other)
         {
+            if (&container != &other.container)
+            {
+                throw std::runtime_error("Cannot assign iterators from different containers");
+            }
             current = other.current;
         }
         return *this;

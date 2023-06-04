@@ -57,8 +57,8 @@ namespace ariel
             bool operator<(const SideCrossIterator &other) const;
             int operator*() const;
             SideCrossIterator &operator++();
-            SideCrossIterator begin();
-            SideCrossIterator end();
+            SideCrossIterator begin() const;
+            SideCrossIterator end() const;
         };
 
         class PrimeIterator

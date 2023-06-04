@@ -52,8 +52,15 @@ namespace ariel
 
     MagicalContainer::AscendingIterator &MagicalContainer::AscendingIterator::operator++()
     {
-        ++current;
-        return *this;
+        if (this->end() == *this)
+        {
+            throw std::runtime_error("Can not increment beyond the end");
+        }
+        else
+        {
+            ++current;
+            return *this;
+        }
     }
 
     MagicalContainer::AscendingIterator MagicalContainer::AscendingIterator::begin()
