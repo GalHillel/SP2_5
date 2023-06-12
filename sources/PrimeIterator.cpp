@@ -1,110 +1,128 @@
 #include "MagicalContainer.hpp"
-#include <cmath>
 
 namespace ariel
 {
-    MagicalContainer::PrimeIterator::PrimeIterator(const MagicalContainer &container)
-        : container(container), current(container.elements.begin())
-    {
-        // Initialize the iterator to the first prime element in the container
-        while (current != container.elements.end() && !isPrime(*current))
-        {
-            ++current;
-        }
-    }
+    // Constructor with index parameter
+    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container, size_t index)
+        : container(container), index(index) {}
 
+    // Default constructor
+    MagicalContainer::PrimeIterator::PrimeIterator(MagicalContainer &container)
+        : container(container), index(0) {}
+
+    // Copy constructor
     MagicalContainer::PrimeIterator::PrimeIterator(const PrimeIterator &other)
-        : container(other.container), current(other.current) {}
+        : container(other.container), index(other.index) {}
 
+    // Move constructor
+    MagicalContainer::PrimeIterator::PrimeIterator(PrimeIterator &&other) noexcept
+        : container(other.container), index(other.index) {}
+
+    // Destructor
     MagicalContainer::PrimeIterator::~PrimeIterator() {}
 
+    // Copy assignment operator
     MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(const PrimeIterator &other)
     {
         if (this != &other)
         {
-            if (&container != &other.container)
+            if (&other.container != &container)
             {
-                throw std::runtime_error("Cannot assign iterators from different containers");
+                throw std::runtime_error("Iterators are not from the same container");
             }
-            current = other.current;
+            index = other.index;
         }
+
         return *this;
     }
 
-    bool MagicalContainer::PrimeIterator::isPrime(int number)
+    // Move assignment operator
+    MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator=(PrimeIterator &&other) noexcept
     {
-        if (number <= 1)
+        if (this != &other)
         {
-            return false;
+            container = std::move(other.container);
+            index = std::move(other.index);
         }
 
-        for (int i = 2; i * i <= number; ++i)
-        {
-            if (number % i == 0)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return *this;
     }
 
+    // Equality comparison operator
     bool MagicalContainer::PrimeIterator::operator==(const PrimeIterator &other) const
     {
-        return current == other.current;
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+        return index == other.index;
     }
 
+    // Inequality comparison operator
     bool MagicalContainer::PrimeIterator::operator!=(const PrimeIterator &other) const
     {
-        return !(*this == other);
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+
+        return index != other.index;
     }
 
+    // Greater than comparison operator
     bool MagicalContainer::PrimeIterator::operator>(const PrimeIterator &other) const
     {
-        return current > other.current;
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+
+        return index > other.index;
     }
 
+    // Less than comparison operator
     bool MagicalContainer::PrimeIterator::operator<(const PrimeIterator &other) const
     {
-        return current < other.current;
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+
+        return index < other.index;
     }
 
+    // Dereference operator
     int MagicalContainer::PrimeIterator::operator*() const
     {
-        return *current;
+        if (index >= container.elementsPrime.size())
+        {
+            throw std::out_of_range("Iterator out of range");
+        }
+
+        return *(container.elementsPrime.at(index));
     }
 
+    // Prefix increment operator
     MagicalContainer::PrimeIterator &MagicalContainer::PrimeIterator::operator++()
     {
-        if (current == container.elements.end())
+        if (index >= container.elementsPrime.size())
         {
             throw std::runtime_error("Iterator out of range");
         }
 
-        ++current;
-        while (current != container.elements.end() && !isPrime(*current))
-        {
-            ++current;
-        }
-
+        ++index;
         return *this;
     }
 
+    // Returns an iterator pointing to the beginning of the container
     MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::begin()
     {
-        PrimeIterator iter(*this);
-        iter.current = container.elements.begin();
-        while (iter.current != container.elements.end() && !isPrime(*iter.current))
-        {
-            ++iter.current;
-        }
-        return iter;
+        return PrimeIterator(container, 0);
     }
 
+    // Returns an iterator pointing to the end of the container
     MagicalContainer::PrimeIterator MagicalContainer::PrimeIterator::end()
     {
-        PrimeIterator iter(*this);
-        iter.current = container.elements.end();
-        return iter;
+        return PrimeIterator(container, container.elementsPrime.size());
     }
 }

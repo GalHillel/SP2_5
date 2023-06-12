@@ -2,105 +2,124 @@
 
 namespace ariel
 {
+    // Constructor with index parameter
+    MagicalContainer::SideCrossIterator::SideCrossIterator(MagicalContainer &container, size_t index)
+        : container(container), index(index) {}
 
-    MagicalContainer::SideCrossIterator::SideCrossIterator(const MagicalContainer &container)
-        : container(container), forward(container.elements.begin()), backward(container.elements.end() - 1), isForward(true) {}
+    // Default constructor
+    MagicalContainer::SideCrossIterator::SideCrossIterator(MagicalContainer &container)
+        : container(container), index(0) {}
 
+    // Copy constructor
     MagicalContainer::SideCrossIterator::SideCrossIterator(const SideCrossIterator &other)
-        : container(other.container), forward(other.forward), backward(other.backward), isForward(other.isForward) {}
+        : container(other.container), index(other.index) {}
 
+    // Move constructor
+    MagicalContainer::SideCrossIterator::SideCrossIterator(SideCrossIterator &&other) noexcept
+        : container(other.container), index(other.index) {}
+
+    // Destructor
     MagicalContainer::SideCrossIterator::~SideCrossIterator() {}
 
+    // Copy assignment operator
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(const SideCrossIterator &other)
     {
         if (this != &other)
         {
-            if (&container != &other.container)
+            if (&other.container != &container)
             {
-                throw std::runtime_error("Cannot assign iterators from different containers");
+                throw std::runtime_error("Iterators are not from the same container");
             }
-            forward = other.forward;
-            backward = other.backward;
-            isForward = other.isForward;
+            index = other.index;
         }
+
         return *this;
     }
 
+    // Move assignment operator
+    MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator=(SideCrossIterator &&other) noexcept
+    {
+        if (this != &other)
+        {
+            container = std::move(other.container);
+            index = std::move(other.index);
+        }
+
+        return *this;
+    }
+
+    // Equality comparison operator
     bool MagicalContainer::SideCrossIterator::operator==(const SideCrossIterator &other) const
     {
-        return forward == other.forward && backward == other.backward && isForward == other.isForward &&
-               &container == &other.container; // Compare the container's addresses to ensure iterators are from the same container
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+        return index == other.index;
     }
 
+    // Inequality comparison operator
     bool MagicalContainer::SideCrossIterator::operator!=(const SideCrossIterator &other) const
     {
-        return !(*this == other);
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+        return index != other.index;
     }
 
+    // Greater than comparison operator
     bool MagicalContainer::SideCrossIterator::operator>(const SideCrossIterator &other) const
     {
-        return forward > other.forward;
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+        return index > other.index;
     }
 
+    // Less than comparison operator
     bool MagicalContainer::SideCrossIterator::operator<(const SideCrossIterator &other) const
     {
-        return forward < other.forward;
+        if (&other.container != &container)
+        {
+            throw std::runtime_error("Iterators are not from the same container");
+        }
+        return index < other.index;
     }
 
+    // Dereference operator
     int MagicalContainer::SideCrossIterator::operator*() const
     {
-        if (isForward)
+        if (index >= container.elementsSidecross.size())
         {
-            if (forward == container.elements.end())
-            {
-                throw std::runtime_error("Iterator out of range");
-            }
-            return *forward;
+            throw std::out_of_range("Iterator out of range");
         }
-        else
-        {
-            if (backward == container.elements.begin() - 1)
-            {
-                throw std::runtime_error("Iterator out of range");
-            }
-            return *backward;
-        }
+
+        return *(container.elementsSidecross.at(index));
     }
 
+    // Prefix increment operator
     MagicalContainer::SideCrossIterator &MagicalContainer::SideCrossIterator::operator++()
     {
-        if (isForward && forward != container.elements.end())
-        {
-            ++forward;
-        }
-        else if (backward != container.elements.begin() - 1)
-        {
-            --backward;
-        }
-        else if (backward == container.elements.begin() - 1 || forward == container.elements.end())
+        if (index >= container.elementsSidecross.size())
         {
             throw std::runtime_error("Iterator out of range");
         }
 
-        isForward = !isForward;
+        ++index;
         return *this;
     }
 
+    // Returns an iterator pointing to the beginning of the container
     MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::begin()
     {
-        SideCrossIterator iter(container);
-        iter.isForward = true;
-        iter.forward = container.elements.begin();    // Set the forward iterator to the beginning
-        iter.backward = container.elements.end() - 1; // Set the backward iterator to the last element
-        return iter;
+        return SideCrossIterator(container, 0);
     }
 
-    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::end() 
+    // Returns an iterator pointing to the end of the container
+    MagicalContainer::SideCrossIterator MagicalContainer::SideCrossIterator::end()
     {
-        SideCrossIterator iter(container);
-        iter.isForward = true;
-        iter.forward = container.elements.end();        // Set the forward iterator to one position after the last element
-        iter.backward = container.elements.begin() - 1; // Set the backward iterator to one position before the first element
-        return iter;
+        return SideCrossIterator(container, container.elementsSidecross.size());
     }
 }
