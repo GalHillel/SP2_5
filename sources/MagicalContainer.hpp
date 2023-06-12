@@ -13,7 +13,7 @@ namespace ariel
         ~MagicalContainer();
         void addElement(int element);
         void removeElement(int element);
-        //MagicalContainer &operator=(const MagicalContainer &other);
+        // MagicalContainer &operator=(const MagicalContainer &other);
         int size();
 
         class AscendingIterator
@@ -57,8 +57,8 @@ namespace ariel
             bool operator<(const SideCrossIterator &other) const;
             int operator*() const;
             SideCrossIterator &operator++();
-            SideCrossIterator begin() const;
-            SideCrossIterator end() const;
+            SideCrossIterator begin();
+            SideCrossIterator end();
         };
 
         class PrimeIterator
